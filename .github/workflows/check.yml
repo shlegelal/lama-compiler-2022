@@ -1,9 +1,7 @@
 name: Regression
 
-on: # [push]
-  pull_request:
-  # pull_request_target:
-    types: [synchronize, opened, reopened, edited]
+on:
+  [ push, pull_request, workflow_dispatch ]
 
 jobs:
   job1:
@@ -19,12 +17,6 @@ jobs:
           ref: refs/pull/${{ github.event.pull_request.number }}/head
       - id: step1
         run: |
-          login=${{ github.event.pull_request.user.login }}
-          echo "$login"
-          if [ "${{ github.base_ref }}" != "${{ github.head_ref }}" ]; then
-             echo "FIASCO: base and head branches differs"
-             exit 1
-          fi
           wget -c --retry-connrefused --tries=0 -q --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet -c --retry-connrefused --tries=0 --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1grnb60AaZBCwhBqETeKOGh3tW7ggEWDJ' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1grnb60AaZBCwhBqETeKOGh3tW7ggEWDJ" -O cw-20201.tar.gz && rm -rf /tmp/cookies.txt
           rm -rf /tmp/cookies.txt
           docker load < cw-20201.tar.gz
